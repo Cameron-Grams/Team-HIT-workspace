@@ -20,7 +20,7 @@ query_params = lambda q_string, start, end: {'query': q_string,
                 'end_time': end,
                 'tweet.fields': tweet_fields,
                 'user.fields': 'entities',
-                'max_results': 10
+                'max_results': 500
                 }
 
 #-------------------------------------------------
