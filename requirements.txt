@@ -255,6 +255,7 @@ toolz
 tornado 
 tqdm 
 traitlets 
+tweepy
 txt2tags==3.7
 typed-ast 
 typing-extensions 
