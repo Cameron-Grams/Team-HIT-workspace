@@ -9,18 +9,16 @@ import config
 
 bearer_token = config.Bearer_Token
 
-search_url = "https://api.twitter.com/2/tweets/search/all"
+# helper function to format the end point with the new tweet id
+search_url = lambda x: f"https://api.twitter.com/2/tweets/{x}?"
 
 # not sure this field does anything, the returns have additional fields...
 tweet_fields = "text,created_at,public_metrics,author_id,conversation_id,entities,lang,possibly_sensitive,in_reply_to_user_id,attachments,edit_history_tweet_ids,referenced_tweets,reply_settings,source"
 
-# helper function for formating: q_string, start and end are provided as arguments to main 
-query_params = lambda q_string, start, end: {'query': q_string, 
-                'start_time': start,
-                'end_time': end,
+# helper function for formating: tweet_fields as arguments to main 
+query_params = { 
                 'tweet.fields': tweet_fields,
                 'user.fields': 'entities',
-                'max_results': 10
                 }
 
 #-------------------------------------------------
@@ -43,33 +41,28 @@ def connect_to_endpoint(url, params):
 #-------------------------------------------------
 
 # controls the request
-def main(query_string="Hurricane Ian", start_dtg='2022-09-01T00:00:00Z', end_dtg='2022-11-01T00:00:00Z', query_params=query_params):
+def main(tweet_id):
     """
     uses the helper function to format the query object with:
     arguments:
-        - query_string: the terms to search the tweets for
-        - start_dtg: when to begin the search for the terms
-        - end_dtg: when to end the search 
-        - query_params: the helper function passed in for local scope
+        - tweet_id: the specific tweet to search for
 
     returns:
         - json_reponse: the response object from the Twitter API; 
             - data: first attribute, the list of tweets
             - meta: the details of the request itself
     """
-    query_params = query_params(query_string, start_dtg, end_dtg)
+    search_url = search_url(tweet_id)
+    query_params = query_params
     json_response = connect_to_endpoint(search_url, query_params)
     return json_response
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="As a module submit query string, start and end date to retrieve Tweets from that range"
-    )
-    parser.add_argument('--query_string', dest='query_string', action='store', required=True)
-    parser.add_argument('--start_date', dest='start_date', action='store', required=True)
-    parser.add_argument('--end_date', dest='end_date', action='store', required=True)
+        description="As a module to return historical tweets given tweet id")
+    parser.add_argument('--tweet_id', dest='tweet_id', action='store', required=True)
 
     args = parser.parse_args() 
 
-    main(args.query_string, args.start_date, args.end_date)
+    main(args.tweet_id)
 
